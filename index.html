@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>web vulnerability accessment Pages</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #111;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #222;
+      color: #fff;
+    }
+
+    .toggle-password {
+      float: right;
+      font-size: 0.8rem;
+      color: #aaa;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 0.5rem;
+      margin-top: 1rem;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .switch a {
+      color: #0af;
+      text-decoration: none;
+    }
+
+    .dashboard {
+      text-align: center;
+      max-width: 800px;
+      padding: 2rem;
+      background-color: #111;
+      border-radius: 1rem;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+
+    .card {
+      background-color: #222;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sign Up Form -->
+  <div class="container" id="signup">
+    <h2>Sign Up</h2>
+    <input type="text" id="sign_username" placeholder="Username" required>
+    <input type="email" id="sign_email" placeholder="Email" required>
+    <input type="password" id="sign_password" placeholder="Password" required>
+    <span class="toggle-password" onclick="togglePassword('sign_password')">Show Password</span>
+    <input type="password" id="sign_confirm" placeholder="Confirm Password" required>
+    <span class="toggle-password" onclick="togglePassword('sign_confirm')">Show Password</span>
+    <button onclick="register()">Register</button>
+    <div class="switch">Already have an account? <a href="#" onclick="toggleForm('login')">Login</a></div>
+  </div>
+
+  <!-- Login Form -->
+  <div class="container" id="login" style="display:none">
+    <h2>Login</h2>
+    <input type="text" id="login_username" placeholder="Username" required>
+    <input type="email" id="login_email" placeholder="Email" required>
+    <input type="password" id="login_password" placeholder="Password" required>
+    <span class="toggle-password" onclick="togglePassword('login_password')">Show Password</span>
+    <button onclick="login()">Login</button>
+    <div class="switch">Don't have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a></div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div class="dashboard" id="dashboard" style="display:none">
+    <h2>Welcome, <span id="display_name"></span>!</h2>
+    <p>Your email: <span id="display_email"></span></p>
+
+    <div class="card">
+      <h3>Profile Summary</h3>
+      <p>Username: <span id="display_name_card"></span></p>
+      <p>Email: <span id="display_email_card"></span></p>
+    </div>
+
+    <div class="card">
+      <h3>Account Status</h3>
+      <p>Status: <strong>Active</strong></p>
+      <p>Membership: <strong>Free Tier</strong></p>
+    </div>
+
+    <div class="card">
+      <h3>Notifications</h3>
+      <p>You have no new notifications.</p>
+    </div>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    function togglePassword(id) {
+      const field = document.getElementById(id);
+      field.type = field.type === "password" ? "text" : "password";
+    }
+
+    function toggleForm(form) {
+      document.getElementById('signup').style.display = form === 'signup' ? 'block' : 'none';
+      document.getElementById('login').style.display = form === 'login' ? 'block' : 'none';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+
+    let userData = {};
+
+    function register() {
+      const username = document.getElementById('sign_username').value;
+      const email = document.getElementById('sign_email').value;
+      const password = document.getElementById('sign_password').value;
+      const confirm = document.getElementById('sign_confirm').value;
+
+      if (password !== confirm) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      userData = { username, email, password };
+      alert("Registration successful! You can now log in.");
+      toggleForm('login');
+    }
+
+    function login() {
+      const username = document.getElementById('login_username').value;
+      const email = document.getElementById('login_email').value;
+      const password = document.getElementById('login_password').value;
+
+      if (
+        username === userData.username &&
+        email === userData.email &&
+        password === userData.password
+      ) {
+        document.getElementById('display_name').textContent = username;
+        document.getElementById('display_email').textContent = email;
+        document.getElementById('display_name_card').textContent = username;
+        document.getElementById('display_email_card').textContent = email;
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+      } else {
+        alert("Incorrect login credentials.");
+      }
+    }
+
+    function logout() {
+      toggleForm('login');
+    }
+  </script>
+</body>
+</html>
