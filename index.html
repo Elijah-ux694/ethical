@@ -170,13 +170,28 @@
       if (password !== confirm) {
         alert("Passwords do not match!");
         return;
-      }
+      } 
 
-      userData = { username, email, password };
+      userData = { username:"", email:"", password:"" };
       alert("Registration successful! You can now log in.");
       toggleForm('login');
     }
 
+    const post = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData)
+    };
+
+    fetch('https://ethicus.onrender.com/create_user', post)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);})
     function login() {
       const username = document.getElementById('login_username').value;
       const email = document.getElementById('login_email').value;
