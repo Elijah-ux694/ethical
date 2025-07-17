@@ -159,9 +159,10 @@
       document.getElementById('dashboard').style.display = 'none';
     }
 
-    let userData = {};
+    
 
     function register() {
+      let userData = {};
       const username = document.getElementById('sign_username').value;
       const email = document.getElementById('sign_email').value;
       const password = document.getElementById('sign_password').value;
@@ -172,10 +173,10 @@
         return;
       } 
 
-      userData = { username:"", email:"", password:"" };
+      userData = { username, email, password};
       alert("Registration successful! You can now log in.");
       toggleForm('login');
-    }
+    
 
     const post = {
       method: 'POST',
@@ -186,33 +187,50 @@
     };
 
     fetch('https://ethicus.onrender.com/create_user', post)
-    .then(response => response.json())
+    .then(response =>  {
+        if (!response.ok) {
+        throw new Error("Failed to register user");
+        alert("Failed to register user")
+      }
+        return response.json();
+    })
+      
     .then(data => {
       console.log(data);
     })
     .catch((error) => {
       console.error('Error:', error);})
+    }
     function login() {
       const username = document.getElementById('login_username').value;
       const email = document.getElementById('login_email').value;
       const password = document.getElementById('login_password').value;
-
-      if (
-        username === userData.username &&
-        email === userData.email &&
-        password === userData.password
-      ) {
-        document.getElementById('display_name').textContent = username;
-        document.getElementById('display_email').textContent = email;
-        document.getElementById('display_name_card').textContent = username;
-        document.getElementById('display_email_card').textContent = email;
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-      } else {
-        alert("Incorrect login credentials.");
-      }
+      userData = {email, password};
+      const post = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData)
     }
 
+        fetch('https://ethicus.onrender.com/login_user', post)
+        .then(response =>  {
+            if (!response.ok) {
+            throw new Error("Invalid credentials");
+            alert("Failed to login user")
+        }
+            return response.json();
+        })
+        
+        .then(data => {
+        console.log(data);
+        })
+        .catch((error) => {
+        console.error('Error:', error);})
+        
+    }
+    
     function logout() {
       toggleForm('login');
     }
