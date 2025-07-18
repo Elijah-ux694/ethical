@@ -144,6 +144,8 @@
       <p>You have no new notifications.</p>
     </div>
 
+    <a href="settings.html" target="_blank" style="display:block; margin-top:1rem; color:#0af;">Go to Settings</a>
+
     <button onclick="logout()">Logout</button>
   </div>
 
@@ -202,34 +204,50 @@
       console.error('Error:', error);})
     }
     function login() {
-      const username = document.getElementById('login_username').value;
-      const email = document.getElementById('login_email').value;
-      const password = document.getElementById('login_password').value;
-      userData = {email, password};
-      const post = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData)
-    }
-
+        const email = document.getElementById('login_email').value;
+        const password = document.getElementById('login_password').value;
+      
+        const userData = { email, password };
+      
+        const post = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData)
+        };
+      
         fetch('https://ethicus.onrender.com/login_user', post)
-        .then(response =>  {
+          .then(response => {
             if (!response.ok) {
-            throw new Error("Invalid credentials");
-            alert("Failed to login user")
-        }
+              alert("Login failed. Please check your credentials.");
+              throw new Error("Invalid credentials");
+            }
             return response.json();
-        })
-        
-        .then(data => {
-        console.log(data);
-        })
-        .catch((error) => {
-        console.error('Error:', error);})
-        
-    }
+          })
+          .then(data => {
+            console.log("Login success:", data);
+      
+            // Assuming response includes: name and email
+            const username = data.name || data.username || "User";
+            const email = data.email;
+      
+            // Fill in dashboard info
+            document.getElementById('display_name').textContent = username;
+            document.getElementById('display_email').textContent = email;
+            document.getElementById('display_name_card').textContent = username;
+            document.getElementById('display_email_card').textContent = email;
+      
+            // Show dashboard and hide login/signup
+            document.getElementById('signup').style.display = 'none';
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+      
     
     function logout() {
       toggleForm('login');
